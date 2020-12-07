@@ -26,7 +26,11 @@ def find_triple_sum_to_2020(input_list: list):
                 return a*b * (target - (a+b))
 
 
+def find_in_one_line(input_list: list) -> int:
+    return [a*(2020-a) for a in input_list if (2020-a) in input_list][0]
+
+
 if __name__ == "__main__":
     input_arr = get_input("input_1.txt")
-    print(f"Part 1: {find_sum_to_2020(input_arr)}")
+    print(f"Part 1: {find_in_one_line(input_arr)}")
     print(f"Part 2: {find_triple_sum_to_2020(input_arr)}")
