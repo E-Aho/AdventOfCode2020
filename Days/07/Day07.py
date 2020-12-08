@@ -55,7 +55,7 @@ def get_number_of_inner_bags(input_map: dict, colour: str):
 
 
 if __name__ == "__main__":
-    target = parse_input("test_input.txt")
+    target = parse_input("input.txt")
     map = list_to_map(target)
     print(part_1(input_map=map))
     print(get_number_of_inner_bags(input_map=map, colour="shiny gold"))
