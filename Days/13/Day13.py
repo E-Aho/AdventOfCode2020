@@ -1,5 +1,4 @@
 import math
-import numpy as np
 
 
 def get_input(input_location: str):
