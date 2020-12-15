@@ -38,7 +38,6 @@ class Mask:
         new_zeros = [i for i in self.floaters if i not in new_ones]
         self.zeros += new_zeros
         self.ones += new_ones
-        print(str(self))
         return self
 
     def __str__(self):
@@ -65,9 +64,16 @@ class Value:
             self.value[j] = "1"
         return self
 
-    def apply_mask_with_float(self, mask: Mask):
+    def apply_float_mask(self, mask: Mask):
         for i in mask.ones:
             self.value[i] = "1"
+        return self
+
+    def apply_floating_values(self, zeros, ones):
+        for i in zeros:
+            self.value[i] = "0"
+        for j in ones:
+            self.value[j] = "1"
         return self
 
     def __int__(self):
@@ -90,15 +96,16 @@ class Emulator:
         return total
 
     def apply_floating_action(self, action: tuple):
-        mask, pos, val = action
-        print("floaters", mask.floaters)
-        for combination in get_all_combinations(mask.floaters):
-            mask.reset()
-            mask.apply_floaters(combination)
-            print(mask.ones)
-            new_pos = Value(pos).apply_mask_with_float(mask)
-            print(int(new_pos), val)
-            self.memory[int(new_pos)] = val
+        mask, pos, val = action[0], Value(action[1]), action[2]
+        pos = pos.apply_float_mask(mask)
+
+        ones_combinations = get_all_combinations(mask.floaters)
+        for ones in ones_combinations:
+            p = deepcopy(pos)
+            zeroes = [i for i in mask.floaters if i not in ones]
+            p.apply_floating_values(zeroes, ones)
+            self.memory[int(p)] = val
+
 
 
 
@@ -131,7 +138,7 @@ def part_2(action_list: list):
 
 if __name__ == "__main__":
 
-    action_list = parse_input(get_input("test_input.txt"))
+    action_list = parse_input(get_input("input.txt"))
     print(part_1(action_list))
     print(part_2(action_list))
 
