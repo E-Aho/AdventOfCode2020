@@ -3,6 +3,8 @@ def get_input(location: str):
         line = file.readlines()[0]
         return [int(val) for val in line.strip().split(",")]
 
+# TODO: Probably a smart way to check for cycles
+
 def play_game(starting_numbers: list):
 
     memory = {}
@@ -27,8 +29,6 @@ def play_game(starting_numbers: list):
     print(f"{i+1}: {curr_number}, last={last_number}")
 
 
-
 if __name__ == "__main__":
     input_list = get_input("input.txt")
     play_game(input_list)
-
