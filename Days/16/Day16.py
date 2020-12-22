@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+
 def get_input(location: str):
     with open(location, "r") as file:
         return [line.strip() for line in file.readlines()]
@@ -43,16 +46,39 @@ def get_valid_tickets(rules, tickets):
                 invalid_sum += value
                 valid = False
         if valid:
-            valid_tickets += ticket
-
+            valid_tickets.append(ticket)
 
     print(invalid_sum)
     return valid_tickets
 
 def find_fields(rules, tickets):
     known_fields = {}
-    len_fields = int(len(rules))
     unknown_indexes = set(range(len(tickets[0])))
+
+    # parse wide first
+    index_map = {}
+    index_poss = {index: set() for index in unknown_indexes}
+    field_map = {field: set() for field in rules.keys()}
+    unknown_fields = {k: v for k, v in rules.items()}
+    for index in range(len(tickets[0])):
+        index_map[index] = set()
+        for ticket in tickets:
+            index_map[index].add(ticket[index])
+        for field_name, field_set in unknown_fields.items():
+            if index_map[index].issubset(field_set):
+                field_map[field_name].add(index)
+                dd = index_poss[index]
+                index_poss[index].add(field_name)
+
+
+    for field_name, possibilities in index_poss.items():
+        if len(possibilities) == 1:
+            print(f"Found: {possibilities}")
+            print(f"Unknown fields: {unknown_fields}")
+            found_field = str(next(iter(possibilities)))
+            known_fields[field_name] = found_field
+            del unknown_fields[found_field]
+
 
     while len(unknown_indexes) > 0:
         for ticket in tickets:
@@ -60,11 +86,13 @@ def find_fields(rules, tickets):
             field_possibilities = {k: [] for k in unknown_fields.keys()}
             index_possibilities = {}
 
+            print(unknown_indexes)
+
             # Check if each field only has one possibility
             for index in unknown_indexes:
-                value = ticket(index)
+                value = ticket[index]
                 possibilities = [field for field in unknown_fields.keys() if value in unknown_fields[field]]
-                if possibilities == 1:
+                if len(possibilities) == 1:
                     found_field = possibilities[0]
                     print(f"Found field {field}")
                     known_fields[found_field] = index
@@ -86,10 +114,12 @@ def find_fields(rules, tickets):
 
     return known_fields
 
+
 if __name__ == "__main__":
     arr = get_input("test_input.txt")
     rules, my_ticket, tickets = parse_input(arr)
-    valid_tickets = get_valid_tickets(rules=rules, tickets=tickets)
-    print(valid_tickets)
+    # print(rules)
+    valid_tickets = get_valid_tickets(rules=deepcopy(rules), tickets=tickets)
+    # print(valid_tickets)
     field_map = find_fields(rules=rules, tickets=valid_tickets)
-
+    print(field_map)
