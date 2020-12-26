@@ -44,19 +44,19 @@ class EnergyCube:
     def get_tot_active_adjacent(self, coord: tuple):
         return sum(s in self.active_cubes for s in self.get_adjacent_cubes(coord))
 
-    def iterate(self, is_hypercube: bool = False):
-        next_state = {}
+    def iterate(self):
+        activity_change_map = {}
         for coord in self.active_cubes:
             adj = self.get_tot_active_adjacent(coord)
             if adj not in (2, 3):
-                next_state[coord] = False
+                activity_change_map[coord] = False  # We set coordinates that have become inactive to False
 
         for coord in self.get_inactive_cubes_adjacent_to_active():
             adj = self.get_tot_active_adjacent(coord)
             if adj == 3:
-                next_state[coord] = True
+                activity_change_map[coord] = True  # We set coordinates that have become active to True
 
-        for coord, is_active in next_state.items():
+        for coord, is_active in activity_change_map.items():
             if is_active:
                 self.active_cubes.add(coord)
             else:
@@ -71,7 +71,7 @@ def do_part_1(initial_state: set):
     energy_cube = EnergyCube(initial_state)
     TURNS = 6
     t = 0
-    while t <= TURNS:
+    while t < TURNS:
         energy_cube.iterate()
         print(t + 1, energy_cube.get_tot())
         t += 1
@@ -88,6 +88,6 @@ def do_part_2(initial_state: set):
 
 
 if __name__ == "__main__":
-    initial_state = get_initial_state("test_input.txt")
+    initial_state = get_initial_state("input.txt")
     do_part_1(initial_state)
     do_part_2(initial_state)
