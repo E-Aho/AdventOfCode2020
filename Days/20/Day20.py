@@ -201,7 +201,7 @@ def part_2(tiles: list):
     n_monsters = count_monsters(image, pattern)
 
     print(f"N monsters: {n_monsters}")
-    result = water_cells - (n_monsters * 15)
+    result = water_cells - (n_monsters * monster_cells)
     print(f"Roughness: {result}")
 
 def count_monsters(image, pattern):
